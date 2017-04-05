@@ -1,5 +1,6 @@
 # dez-tw-blog
-Build my own blog
+Maintained in [dez-tw-blog-heroku](https://github.com/DezChuang/dez-tw-blog-heroku)
+Deployed at [http://deztwblog.herokuapp.com/](http://deztwblog.herokuapp.com/)
 
 
 # Reference
