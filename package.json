@@ -15,6 +15,7 @@
     "express": "^4.14.1",
     "express-sanitizer": "^1.0.2",
     "express-session": "^1.15.1",
+    "formidable": "^1.1.1",
     "method-override": "^2.3.8",
     "moment": "^2.18.1",
     "mongoose": "^4.8.1",

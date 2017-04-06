@@ -1,5 +1,7 @@
 var express     = require("express"),
     router      = express.Router(),
+    formidable  = require('formidable'),
+    fs          = require('fs'),
     Post        = require("../models/post"),
     middleware  = require("../middleware");
 
@@ -36,6 +38,64 @@ router.post("/", middleware.isAdmin, function(req,res){
     });
 });
 
+
+//FILE UPLOAD
+router.get("/file-upload", middleware.isAdmin, function(req,res){
+    res.render("posts/upload");
+});
+
+router.post('/file-upload', middleware.isAdmin, function(req, res, next) {
+    var form = new formidable.IncomingForm();   //Setup upload form
+    form.encoding = 'utf-8';
+    form.uploadDir = 'public/img/posts/:id/';
+    form.keepExtensions = true;
+    form.maxFieldsSize = 2 * 1024 * 1024;
+
+
+    if (!fs.existsSync(form.uploadDir)){
+        fs.mkdirSync(form.uploadDir);
+    }
+
+    form.parse(req, function(err, fields, files) {
+        if (err) {
+            req.flash("error", "Something wrong happened!");
+            res.redirect("/posts");
+            return;
+        }
+
+        var extName = '';
+        switch (files.fulAvatar.type) {
+            case 'image/pjpeg':
+                extName = 'jpg';
+                break;
+            case 'image/jpeg':
+                extName = 'jpg';
+                break;
+            case 'image/png':
+                extName = 'png';
+                break;
+            case 'image/x-png':
+                extName = 'png';
+                break;
+        }
+
+        if(extName.length == 0){
+              req.flash("error", "Wrong file format.");
+              res.redirect("/posts");
+              return;
+        }
+
+        var avatarName = Math.random() + '.' + extName;
+        var newPath = form.uploadDir + avatarName;
+
+        console.log(newPath);
+        fs.renameSync(files.fulAvatar.path, newPath);  //rename
+    });
+
+    req.flash("success", "Successfully upload file!");
+    res.redirect("/posts");
+});
+
 //NEW - Show form to create new posts
 router.get("/new", middleware.isAdmin, function(req,res){
     res.render("posts/new");
@@ -65,7 +125,7 @@ router.get("/:id/edit", middleware.checkPostOwnership, function(req, res){
 //UPDATE
 router.put("/:id", middleware.checkPostOwnership, function(req, res){
     //Add express-sanitizer to prevent middleware script in post
-    req.body.post.description = req.sanitize(req.body.post.description);
+    //req.body.post.description = req.sanitize(req.body.post.description);
     Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost) {
         if(err){
             console.log(err);

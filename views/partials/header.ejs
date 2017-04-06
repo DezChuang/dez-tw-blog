@@ -48,6 +48,7 @@
                           <li class="<%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>"><a href="/register">Sign Up</a></li>
                       <% } else if(currentUser.username === 'dez'){ %>
                           <li><a href="/posts/new">Add a new post</a></li>
+                          <li><a href="/posts/file-upload">Add a file</a></li>
                           <li><a href="/profile">Hi, <%= currentUser.username %></a></li>
                           <li><a href="/logout">Log Out</a></li>
                       <% } else{ %>
